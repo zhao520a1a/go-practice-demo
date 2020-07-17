@@ -12,24 +12,28 @@ import (
 	"time"
 )
 
-
-// 工具包源码:https://gitee.com/xurime/excelize
+// 源码:https://gitee.com/xurime/excelize
 // 帮助文档：https://xuri.me/excelize/zh-hans/stream.html#Flush
 //注：
 //1.图片缩放建议使用一个开源库(github.com/nfnt/resize)，不要使用360库自带的缩放，会有一点问题
 //2.先对单元格做大小控制，再插入图片，否则有可能会导致一些图片被拉伸
 func main() {
-	//fileName := "Book1.xlsx"
-	//newExcelFile(fileName)
-	//readExcel(fileName)
+	file1Name := "test1.xlsx"
+	newNormalExcelFile(file1Name)
+	readNormalExcel(file1Name)
 
-	//newChartExcel()
-	//newPicExcel(fileName)
-	//readPicExcel(fileName)
-	WriteExcelFile("Book2.xlsx")
+	file2Name := "test2.xlsx"
+	newChartExcel(file2Name)
+
+	file3Name := "test3.xlsx"
+	newPicExcel(file3Name)
+	readPicExcel(file3Name)
+
+	file4Name := "test4.xlsx"
+	WriteExcelFile(file4Name)
 }
 
-func newExcelFile(fileName string) {
+func newNormalExcelFile(fileName string) {
 	f := excelize.NewFile()
 	// 创建一个工作表
 	index := f.NewSheet("Sheet2")
@@ -44,8 +48,8 @@ func newExcelFile(fileName string) {
 	}
 }
 
-func readExcel(fileName string) {
-	f, err := excelize.OpenFile("Book1.xlsx")
+func readNormalExcel(fileName string) {
+	f, err := excelize.OpenFile(fileName)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -68,6 +72,7 @@ func readExcel(fileName string) {
 }
 
 func newChartExcel(fileName string) {
+	//创建柱状图
 	categories := map[string]string{"A2": "Small", "A3": "Normal", "A4": "Large", "B1": "Apple", "C1": "Orange", "D1": "Pear"}
 	values := map[string]int{"B2": 2, "C2": 3, "D2": 3, "B3": 5, "C3": 2, "D3": 4, "B4": 6, "C4": 7, "D4": 8}
 	f := excelize.NewFile()
@@ -88,11 +93,8 @@ func newChartExcel(fileName string) {
 }
 
 func newPicExcel(fileName string) {
-	f, err := excelize.OpenFile(fileName)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	// 创建一个工作表
+	f := excelize.NewFile()
 	// 插入图片
 	if err := f.AddPicture("Sheet1", "A2", "image.png", ""); err != nil {
 		fmt.Println(err)
@@ -105,14 +107,14 @@ func newPicExcel(fileName string) {
 	if err := f.AddPicture("Sheet1", "H2", "image.gif", `{"x_offset": 15, "y_offset": 10, "print_obj": true, "lock_aspect_ratio": false, "locked": false}`); err != nil {
 		fmt.Println(err)
 	}
-	// 保存文件
-	if err = f.Save(); err != nil {
+	// 根据指定路径保存文件
+	if err := f.SaveAs(fileName); err != nil {
 		fmt.Println(err)
 	}
 }
 
 func readPicExcel(fileName string) {
-	f, err := excelize.OpenFile("Book1.xlsx")
+	f, err := excelize.OpenFile(fileName)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -120,19 +122,16 @@ func readPicExcel(fileName string) {
 	// 获取工作表中指定单元格的值
 	//name, ff, err := f.GetPicture("Sheet1", "A2")
 	//name, ff, err := f.GetPicture("Sheet1", "D2")
-	name, ff, err := f.GetPicture("Sheet1", "H2")
+	_, ff, err := f.GetPicture("Sheet1", "H2")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(name)
 
 	bufstore := make([]byte, 5000000)                                              //数据缓存
 	base64.StdEncoding.Encode(bufstore, ff)                                        // 文件转base64
 	_ = ioutil.WriteFile(fmt.Sprintf("./%d.png", time.Now().UnixNano()), ff, 0666) //直接写入到文件就ok完活了。
 }
-
-
 
 //流式写数据
 func WriteExcelFile(fileName string) {
@@ -148,7 +147,7 @@ func WriteExcelFile(fileName string) {
 	if err := streamWriter.SetRow("A1", []interface{}{excelize.Cell{StyleID: styleID, Value: "Data"}}); err != nil {
 		fmt.Println(err)
 	}
-	for rowID := 2; rowID <= 100; rowID++ {
+	for rowID := 2; rowID <= 10000; rowID++ {
 		row := make([]interface{}, 5)
 		for colID := 0; colID < 5; colID++ {
 			row[colID] = rand.Intn(640000)
@@ -166,4 +165,3 @@ func WriteExcelFile(fileName string) {
 	}
 
 }
-
