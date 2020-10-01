@@ -8,25 +8,21 @@ import (
 func main() {
 
 	//date -> timestamp
-	dateStr := "2020-07-15"
+	dateStr := "2020-08-11"
 	begindate, err := time.ParseInLocation("2006-01-02", dateStr, time.Local)
 	if err != nil {
 		fmt.Println(err)
 	}
 	fmt.Printf(" %d \n--\n", begindate.Unix())
 
-	//dateStr1 := "2020-07-15 08:00:00"
-	//begindate1, err := time.ParseInLocation("2006-01-02 00:00:00",  dateStr1, time.Local)
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
-	//fmt.Printf("\n--\n", begindate1.Unix())
-
 	//timestamp -> date
-	//timestamp := int64(1588118400)  // 2020-04-29 08:00:00
-	timestamp := int64(1594828800)
-	//timestamp := int64(1594828862)
+	timestamp := int64(1595284492) //2020-07-21 06:34:52
+	//timestamp := int64(1583229422)
+	//timestamp := int64(1597473988)
 	tt := time.Unix(timestamp, 0)
 	fmt.Println(tt.Format("2006-01-02 15:04:05"))
+
+	//newDay := time.Now().AddDate(-1 /* years */, 0 /* months */, 0 /* days */)
+	//fmt.Println(newDay)LoadLocation
 
 }

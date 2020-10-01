@@ -44,7 +44,6 @@ func isZero(v reflect.Value) bool {
 	return true
 }
 
-
 // OmitEmpty is a helper function to clear where map zero value
 func OmitEmpty(where map[string]interface{}, omitKey []string) map[string]interface{} {
 	for _, key := range omitKey {
@@ -63,8 +62,8 @@ func OmitEmpty(where map[string]interface{}, omitKey []string) map[string]interf
 func main() {
 	where := map[string]interface{}{
 		"score": 0,
-		"age": 35,
+		"age":   35,
 	}
 	finalWhere := OmitEmpty(where, []string{"score", "age"})
-	fmt.Printf(finalWhere)
+	fmt.Printf("%v", finalWhere)
 }
